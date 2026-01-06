@@ -122,7 +122,7 @@ Start with Terms endpoints (no auth required):
 1. Use `POST /api/v1/users/me` with sample data:
    ```json
    {
-     "name": "John Doe",
+     "name": "Akhil ",
      "phone": "+911234567890",
      "authProvider": "email"
    }
@@ -139,7 +139,7 @@ Start with Terms endpoints (no auth required):
 ### Create User Profile
 ```json
 {
-  "name": "John Doe",
+  "name": "Akhil MR",
   "phone": "+911234567890",
   "authProvider": "email"
 }
@@ -148,7 +148,7 @@ Start with Terms endpoints (no auth required):
 ### Update User Profile
 ```json
 {
-  "name": "John Doe Updated",
+  "name": "Akhil MR",
   "phone": "+911234567891"
 }
 ```

@@ -90,7 +90,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"+911234567890\",\n  \"authProvider\": \"email\"\n}",
+									"raw": "{\n  \"name\": \"Mahesh M\",\n  \"phone\": \"+911234567890\",\n  \"authProvider\": \"email\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -131,7 +131,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"John Doe Updated\",\n  \"phone\": \"+911234567891\"\n}",
+									"raw": "{\n  \"name\": \"Mahesh M\",\n  \"phone\": \"+911234567891\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
