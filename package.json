@@ -1,6 +1,19 @@
 {
+  "name": "errunds-backend",
+  "version": "1.0.0",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "token:get": "node scripts/get-id-token.js",
+    "token:custom": "node scripts/generate-test-token.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "firebase-admin": "^13.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

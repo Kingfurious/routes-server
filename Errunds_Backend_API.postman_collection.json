@@ -1,0 +1,460 @@
+{
+	"info": {
+		"_postman_id": "errunds-backend-api",
+		"name": "Errunds Backend API - Sprint 1",
+		"description": "Complete API collection for Errunds Backend - Sprint 1 endpoints including User Management, Settings, Terms & Privacy, and Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Validate Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{firebase_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/validate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"validate"
+							]
+						},
+						"description": "Validate Firebase ID token and return user info (uid, email)"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Profile",
+					"item": [
+						{
+							"name": "Get User Profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me"
+									]
+								},
+								"description": "Fetch logged-in user profile from Firestore"
+							},
+							"response": []
+						},
+						{
+							"name": "Create User Profile",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"+911234567890\",\n  \"authProvider\": \"email\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me"
+									]
+								},
+								"description": "Create user profile (idempotent - only creates if not exists). Used on first login."
+							},
+							"response": []
+						},
+						{
+							"name": "Update User Profile",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Doe Updated\",\n  \"phone\": \"+911234567891\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me"
+									]
+								},
+								"description": "Update user profile. Allowed fields: name, phone, isOnboarded, lastLoginAt"
+							},
+							"response": []
+						},
+						{
+							"name": "Mark Onboarding Completed",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me/onboarding",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										"onboarding"
+									]
+								},
+								"description": "Mark onboarding as completed. Sets isOnboarded to true."
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Status",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me/status",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										"status"
+									]
+								},
+								"description": "Check user account status (status, isOnboarded). Used to control app flow."
+							},
+							"response": []
+						}
+					],
+					"description": "User profile management endpoints"
+				},
+				{
+					"name": "Settings",
+					"item": [
+						{
+							"name": "Get User Settings",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me/settings",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										"settings"
+									]
+								},
+								"description": "Fetch user preferences and settings (language, theme, notifications, etc.)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update User Settings",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"stayLoggedIn\": true,\n  \"notificationsEnabled\": true,\n  \"language\": \"en\",\n  \"theme\": \"dark\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me/settings",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										"settings"
+									]
+								},
+								"description": "Update user preferences. Partial updates allowed."
+							},
+							"response": []
+						}
+					],
+					"description": "User settings and preferences endpoints"
+				},
+				{
+					"name": "Terms Acceptance",
+					"item": [
+						{
+							"name": "Get User Terms Acceptance",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me/terms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										"terms"
+									]
+								},
+								"description": "Check which terms and privacy versions the user has accepted. Used during app launch."
+							},
+							"response": []
+						},
+						{
+							"name": "Accept Terms",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{firebase_token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"termsVersion\": \"v1.0\",\n  \"privacyVersion\": \"v1.0\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/users/me/terms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										"terms"
+									]
+								},
+								"description": "Accept latest terms and privacy versions. One-time write only (create only, no updates)."
+							},
+							"response": []
+						}
+					],
+					"description": "User terms acceptance endpoints"
+				}
+			],
+			"description": "User management endpoints (all require authentication)"
+		},
+		{
+			"name": "Terms & Privacy",
+			"item": [
+				{
+					"name": "Get Active Terms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/terms/active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"terms",
+								"active"
+							]
+						},
+						"description": "Get all active Terms & Privacy documents. Public endpoint (no authentication required)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Terms by Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/terms/:type",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"terms",
+								":type"
+							],
+							"variable": [
+								{
+									"key": "type",
+									"value": "terms",
+									"description": "Type of document: 'terms' or 'privacy'"
+								}
+							]
+						},
+						"description": "Get latest active document by type (terms or privacy). Public endpoint (no authentication required)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Privacy by Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/terms/privacy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"terms",
+								"privacy"
+							]
+						},
+						"description": "Get latest active privacy policy. Public endpoint (no authentication required)."
+					},
+					"response": []
+				}
+			],
+			"description": "Terms & Privacy endpoints (public, no authentication required)"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "firebase_token",
+			"value": "YOUR_FIREBASE_ID_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}
