@@ -2,6 +2,53 @@ const admin = require("firebase-admin");
 const db = admin.firestore();
 
 /**
+ * Helper function to convert Firestore Timestamp to milliseconds
+ */
+const convertTimestamp = (value) => {
+  if (value && value.toMillis) {
+    return value.toMillis();
+  }
+  if (value && value._seconds) {
+    return value._seconds * 1000 + (value._nanoseconds || 0) / 1000000;
+  }
+  return value;
+};
+
+/**
+ * Helper function to clean document data
+ * - Removes duplicate/spaced field names
+ * - Trims whitespace and newlines from IDs and string values
+ * - Normalizes field names
+ */
+const cleanDocumentData = (docId, data) => {
+  const cleaned = {
+    id: docId.trim(), // Clean the document ID
+  };
+
+  // Copy fields, excluding any with trailing spaces in keys
+  Object.keys(data).forEach((key) => {
+    const cleanKey = key.trim();
+    if (cleanKey && cleanKey !== "id") {
+      // Don't duplicate id field
+      let value = data[key];
+
+      // Convert Firestore Timestamps to milliseconds
+      if (value && (value.toMillis || value._seconds)) {
+        value = convertTimestamp(value);
+      }
+      // Trim string values
+      else if (typeof value === "string") {
+        value = value.trim();
+      }
+
+      cleaned[cleanKey] = value;
+    }
+  });
+
+  return cleaned;
+};
+
+/**
  * GET /api/v1/tasks/metadata
  *
  * Returns the single bundled JSON cache object used by the Flutter app
@@ -28,7 +75,9 @@ const getCreateTaskMetadata = async (req, res) => {
     if (metaDoc.exists) {
       const metaData = metaDoc.data();
       if (metaData.version) version = metaData.version;
-      if (metaData.lastUpdatedAt) lastUpdatedAt = metaData.lastUpdatedAt;
+      if (metaData.lastUpdatedAt) {
+        lastUpdatedAt = convertTimestamp(metaData.lastUpdatedAt);
+      }
     }
 
     // Fetch active categories
@@ -40,46 +89,59 @@ const getCreateTaskMetadata = async (req, res) => {
 
     const categories = [];
     categoriesSnapshot.forEach((doc) => {
-      categories.push({
-        id: doc.id,
-        ...doc.data(),
-      });
+      categories.push(cleanDocumentData(doc.id, doc.data()));
     });
 
-    // Fetch active task types
-    const taskTypesSnapshot = await db
-      .collection("task_types")
-      .where("isActive", "==", true)
-      .get();
+    // Fetch all task types (don't filter by isActive in query)
+    // Filter in-memory: only exclude if explicitly isActive === false
+    const taskTypesSnapshot = await db.collection("task_types").get();
 
     const taskTypes = [];
     const activeTaskTypeIds = new Set();
     taskTypesSnapshot.forEach((doc) => {
       const data = doc.data();
-      taskTypes.push({
-        id: doc.id,
-        ...data,
-      });
-      activeTaskTypeIds.add(doc.id);
+      // Only exclude if explicitly isActive === false
+      if (data.isActive === false) {
+        return;
+      }
+      const cleaned = cleanDocumentData(doc.id, data);
+      taskTypes.push(cleaned);
+      activeTaskTypeIds.add(cleaned.id);
     });
 
-    // Fetch field configs (optionally filter by active task types)
+    // Fetch all field configs
+    // If we have active task types, filter by them; otherwise include all
     const fieldConfigsSnapshot = await db.collection("task_type_fields").get();
 
     const fieldConfigs = [];
     fieldConfigsSnapshot.forEach((doc) => {
       const data = doc.data();
 
-      // If taskTypeId is present, keep only configs for active task types
-      if (data.taskTypeId && !activeTaskTypeIds.has(data.taskTypeId)) {
-        return;
+      // If we have active task types, filter by them; otherwise include all
+      if (activeTaskTypeIds.size > 0 && data.taskTypeId) {
+        if (!activeTaskTypeIds.has(data.taskTypeId)) {
+          return; // Skip configs for inactive task types
+        }
       }
 
-      fieldConfigs.push({
-        id: doc.id,
-        ...data,
-      });
+      fieldConfigs.push(cleanDocumentData(doc.id, data));
     });
+
+    // Logging for debugging
+    console.log(`Fetched ${categories.length} categories`);
+    console.log(`Fetched ${taskTypes.length} task types`);
+    console.log(`Fetched ${fieldConfigs.length} field configs`);
+
+    if (taskTypes.length === 0) {
+      console.warn(
+        "Warning: No task types found. Check if task_types collection has documents."
+      );
+    }
+    if (fieldConfigs.length === 0) {
+      console.warn(
+        "Warning: No field configs found. Check if task_type_fields collection has documents."
+      );
+    }
 
     const response = {
       version,
