@@ -443,6 +443,100 @@
 				}
 			],
 			"description": "Terms & Privacy endpoints (public, no authentication required)"
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Get Create Task Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								"metadata"
+							]
+						},
+						"description": "Fetch bundled task metadata (version, categories, taskTypes, fieldConfigs) for the Create Task experience. Public endpoint (no authentication required)."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Task",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{firebase_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryId\": \"household_chores\",\n  \"categoryName\": \"Household Chores\",\n  \"taskTypeId\": \"fold_laundry\",\n  \"taskName\": \"Fold Laundry\",\n  \"taskDescription\": \"Please fold all clean laundry neatly.\",\n  \"location\": {\n    \"address\": \"123 Corner St., Vancouver, BC\",\n    \"latitude\": 49.2827,\n    \"longitude\": -123.1207,\n    \"placeName\": \"123 Corner St.\"\n  },\n  \"scheduledDate\": 1737129600000,\n  \"scheduledTime\": 1737133200000,\n  \"scheduledDateTime\": \"2026-01-20T14:00:00Z\",\n  \"dynamicFields\": {\n    \"noOfLaundryBaskets\": 2\n  },\n  \"additionalNotes\": \"Use gentle setting where possible.\",\n  \"photos\": [],\n  \"paymentStatus\": \"pending\",\n  \"paymentId\": null,\n  \"paymentAmount\": 20.0,\n  \"estimatedCost\": 15.0,\n  \"budget\": 25.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks"
+							]
+						},
+						"description": "Create a new task. Requires Firebase ID token. dynamicFields contains the dynamic form data exactly as submitted by the app."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Tasks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{firebase_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/my",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								"my"
+							]
+						},
+						"description": "Fetch all tasks created by the authenticated customer, ordered by createdAt (most recent first)."
+					},
+					"response": []
+				}
+			],
+			"description": "Task metadata and task lifecycle endpoints (Create Task flow)."
 		}
 	],
 	"variable": [

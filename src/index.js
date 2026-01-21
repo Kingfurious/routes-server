@@ -26,10 +26,12 @@ app.get("/", (req, res) => {
 const userRoutes = require("./routes/users");
 const termsRoutes = require("./routes/terms");
 const authRoutes = require("./routes/auth");
+const taskRoutes = require("./routes/tasks");
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/terms", termsRoutes);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/tasks", taskRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
