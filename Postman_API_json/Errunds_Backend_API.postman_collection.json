@@ -534,6 +534,122 @@
 						"description": "Fetch all tasks created by the authenticated customer, ordered by createdAt (most recent first)."
 					},
 					"response": []
+				},
+				{
+					"name": "Get Task By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{firebase_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task to retrieve"
+								}
+							]
+						},
+						"description": "Fetch a single task by ID. Only the task owner can view their task."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{firebase_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"location\": {\n    \"address\": \"456 New St., Vancouver, BC\",\n    \"latitude\": 49.2900,\n    \"longitude\": -123.1300,\n    \"placeName\": \"456 New St.\"\n  },\n  \"scheduledDateTime\": \"2026-01-21T15:00:00Z\",\n  \"dynamicFields\": {\n    \"noOfLaundryBaskets\": 3\n  },\n  \"additionalNotes\": \"Updated notes: Please be extra careful with delicate items.\",\n  \"taskDescription\": \"Updated task description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task to update"
+								}
+							]
+						},
+						"description": "Update a task. Only the task owner can update, and only certain fields are allowed (location, schedule, dynamicFields, additionalNotes, photos, taskDescription, payment info). Cannot update completed or cancelled tasks."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{firebase_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task to delete/cancel"
+								}
+							]
+						},
+						"description": "Soft delete a task by setting status to 'cancelled'. Only the task owner can delete, and cannot delete completed tasks."
+					},
+					"response": []
 				}
 			],
 			"description": "Task metadata and task lifecycle endpoints (Create Task flow)."

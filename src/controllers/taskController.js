@@ -191,8 +191,210 @@ const getMyTasks = async (req, res) => {
   }
 };
 
+/**
+ * GET /api/v1/tasks/:taskId
+ *
+ * Returns a single task by ID. Only the task owner can view their task.
+ */
+const getTaskById = async (req, res) => {
+  try {
+    const { uid } = req.user;
+    const { taskId } = req.params;
+
+    const taskDoc = await db.collection("tasks").doc(taskId).get();
+
+    if (!taskDoc.exists) {
+      return res.status(404).json({
+        error: "Not Found",
+        message: "Task not found",
+      });
+    }
+
+    const taskData = taskDoc.data();
+
+    // Authorization: only task owner can view
+    if (taskData.customerId !== uid) {
+      return res.status(403).json({
+        error: "Forbidden",
+        message: "You don't have permission to view this task",
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        id: taskDoc.id,
+        ...taskData,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: "Failed to fetch task",
+    });
+  }
+};
+
+/**
+ * PUT /api/v1/tasks/:taskId
+ *
+ * Updates a task. Only the task owner can update, and only certain fields
+ * are allowed. Cannot update completed or cancelled tasks.
+ */
+const updateTask = async (req, res) => {
+  try {
+    const { uid } = req.user;
+    const { taskId } = req.params;
+    const updateData = req.body;
+
+    const taskRef = db.collection("tasks").doc(taskId);
+    const taskDoc = await taskRef.get();
+
+    if (!taskDoc.exists) {
+      return res.status(404).json({
+        error: "Not Found",
+        message: "Task not found",
+      });
+    }
+
+    const taskData = taskDoc.data();
+
+    // Authorization: only task owner can update
+    if (taskData.customerId !== uid) {
+      return res.status(403).json({
+        error: "Forbidden",
+        message: "You don't have permission to update this task",
+      });
+    }
+
+    // Business rule: cannot update completed or cancelled tasks
+    if (taskData.status === "completed" || taskData.status === "cancelled") {
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "Cannot update a completed or cancelled task",
+      });
+    }
+
+    // Define allowed fields for update
+    const allowedFields = [
+      "location",
+      "scheduledDate",
+      "scheduledTime",
+      "scheduledDateTime",
+      "dynamicFields",
+      "additionalNotes",
+      "photos",
+      "taskDescription",
+      "paymentAmount",
+      "estimatedCost",
+      "budget",
+      "categoryName",
+      "taskName",
+    ];
+
+    const updatePayload = {};
+    Object.keys(updateData).forEach((key) => {
+      if (allowedFields.includes(key)) {
+        updatePayload[key] = updateData[key];
+      }
+    });
+
+    // Always update updatedAt timestamp
+    updatePayload.updatedAt = nowTimestamp();
+
+    await taskRef.update(updatePayload);
+
+    // Fetch updated document
+    const updatedDoc = await taskRef.get();
+
+    return res.json({
+      success: true,
+      message: "Task updated successfully",
+      data: {
+        id: updatedDoc.id,
+        ...updatedDoc.data(),
+      },
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: "Failed to update task",
+    });
+  }
+};
+
+/**
+ * DELETE /api/v1/tasks/:taskId
+ *
+ * Soft deletes a task by setting status to "cancelled".
+ * Only the task owner can delete, and cannot delete completed tasks.
+ */
+const deleteTask = async (req, res) => {
+  try {
+    const { uid } = req.user;
+    const { taskId } = req.params;
+
+    const taskRef = db.collection("tasks").doc(taskId);
+    const taskDoc = await taskRef.get();
+
+    if (!taskDoc.exists) {
+      return res.status(404).json({
+        error: "Not Found",
+        message: "Task not found",
+      });
+    }
+
+    const taskData = taskDoc.data();
+
+    // Authorization: only task owner can delete
+    if (taskData.customerId !== uid) {
+      return res.status(403).json({
+        error: "Forbidden",
+        message: "You don't have permission to delete this task",
+      });
+    }
+
+    // Business rule: cannot delete if task is already completed
+    if (taskData.status === "completed") {
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "Cannot delete a completed task",
+      });
+    }
+
+    // Soft delete: set status to cancelled
+    await taskRef.update({
+      status: "cancelled",
+      updatedAt: nowTimestamp(),
+    });
+
+    // Fetch updated document
+    const updatedDoc = await taskRef.get();
+
+    return res.json({
+      success: true,
+      message: "Task cancelled successfully",
+      data: {
+        id: updatedDoc.id,
+        ...updatedDoc.data(),
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    return res.status(500).json({
+      error: "Internal Server Error",
+      message: "Failed to delete task",
+    });
+  }
+};
+
 module.exports = {
   createTask,
   getMyTasks,
+  getTaskById,
+  updateTask,
+  deleteTask,
 };
 

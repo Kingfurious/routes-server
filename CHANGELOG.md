@@ -143,6 +143,134 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-01-18
+
+### Added
+
+#### Task Management APIs
+- **Task Metadata Endpoint (Public)**
+  - `GET /api/v1/tasks/metadata` - Fetch bundled task metadata for Create Task flow
+    - Returns single cache object with `version`, `lastUpdatedAt`, `categories`, `taskTypes`, and `fieldConfigs`
+    - Public endpoint (no authentication required)
+    - Optimized for Flutter app caching (Hive/Isar)
+    - HTTP cache headers for client-side caching
+
+- **Task CRUD Endpoints (Authenticated)**
+  - `POST /api/v1/tasks` - Create a new task
+    - Accepts `categoryId`, `taskTypeId`, `location`, schedule fields, `dynamicFields`, payment info
+    - Validates required fields and stores `dynamicFields` as-is (no interpretation)
+    - Generates unique task ID and human-readable task number
+    - Sets default status to "pending"
+  
+  - `GET /api/v1/tasks/my` - Get all tasks for authenticated customer
+    - Returns tasks ordered by `createdAt` (newest first)
+    - Requires Firestore composite index on `customerId` + `createdAt`
+  
+  - `GET /api/v1/tasks/:taskId` - Get single task by ID
+    - Owner-only authorization (only task owner can view)
+    - Returns 404 if task not found, 403 if unauthorized
+  
+  - `PUT /api/v1/tasks/:taskId` - Update task
+    - Owner-only authorization
+    - Field restrictions: only allows updates to location, schedule, `dynamicFields`, notes, photos, payment info
+    - Business rule: cannot update completed or cancelled tasks
+    - Cannot update system-managed fields (status, runnerId, timestamps)
+    - Automatically updates `updatedAt` timestamp
+  
+  - `DELETE /api/v1/tasks/:taskId` - Delete/cancel task
+    - Owner-only authorization
+    - Soft delete: sets status to "cancelled" (preserves data history)
+    - Business rule: cannot delete completed tasks
+
+#### Task Metadata Controller
+- **Data Fetching & Processing**
+  - Fetches from Firestore collections: `task_categories`, `task_types`, `task_type_fields`, `task_metadata_meta`
+  - Flexible `isActive` filtering: treats missing/undefined as active (only excludes if explicitly `false`)
+  - Fetches all task types and field configs, filters in-memory for better reliability
+  
+- **Data Cleaning & Normalization**
+  - Removes duplicate/spaced field names (e.g., `"id ": "value"`)
+  - Trims whitespace and newlines from IDs and string values
+  - Converts Firestore Timestamps to milliseconds for consistent JSON output
+  - Normalizes field names to prevent data quality issues
+
+- **Logging & Debugging**
+  - Console logging for document counts (categories, task types, field configs)
+  - Warning messages if expected data is missing
+  - Error logging for troubleshooting
+
+#### Firestore Collections Support
+- **Task Collections**
+  - `task_categories` - Category definitions with display order, icons, notes
+  - `task_types` - Task type definitions linked to categories via `categoryId`
+  - `task_type_fields` - Dynamic form field configurations linked to task types
+  - `task_metadata_meta` - Metadata versioning (singleton document)
+  - `tasks` - Customer-created task documents with full lifecycle tracking
+
+- **Task Document Structure**
+  - Customer identification (`customerId`, `customerEmail`, `customerName`)
+  - Task details (`categoryId`, `taskTypeId`, `taskName`, `taskDescription`)
+  - Location object (`address`, `latitude`, `longitude`, `placeName`)
+  - Schedule fields (`scheduledDate`, `scheduledTime`, `scheduledDateTime`)
+  - Dynamic fields (`dynamicFields` object - stored as-is, no interpretation)
+  - Payment information (`paymentStatus`, `paymentId`, `paymentAmount`, `estimatedCost`, `budget`)
+  - Task lifecycle (`status`, `runnerId`, `acceptedAt`, `startedAt`, `completedAt`)
+  - Timestamps (`createdAt`, `updatedAt`)
+
+#### Developer Tools
+- **Postman Collection Updates**
+  - Added 3 new task endpoints to Tasks folder
+  - Get Task By ID request with path variable
+  - Update Task request with example request body
+  - Delete Task request
+  - All requests include proper authentication headers
+
+#### Documentation
+- **FIRESTORE_INDEX_SETUP.md** - Firestore index creation guide
+  - Instructions for creating composite index on `tasks` collection
+  - Quick method using error URL
+  - Manual method via Firebase Console
+  - Index details and verification steps
+
+### Changed
+
+- **Task Metadata Endpoint Behavior**
+  - Removed strict `isActive` filter from task types query
+  - Now fetches all task types and filters in-memory (more reliable)
+  - Field configs filtering logic improved to handle edge cases
+  - Added data cleaning to prevent duplicate fields and whitespace issues
+
+### Security
+
+- All task CRUD endpoints protected with Firebase ID token authentication
+- Owner-only authorization for get, update, and delete operations
+- Field-level restrictions on task updates (prevents status manipulation)
+- Business rules prevent unauthorized state changes
+
+### Technical Details
+
+- **Task Status Flow**: `pending` → `active` → `in_progress` → `completed` (or `cancelled`)
+- **Soft Delete**: Tasks are marked as "cancelled" rather than physically deleted
+- **Dynamic Fields**: Backend stores `dynamicFields` as-is without interpretation (Flutter handles form logic)
+- **Metadata Caching**: Single bundled JSON object for zero-latency UI in Flutter app
+- **Firestore Index Required**: Composite index on `tasks` collection (`customerId` Ascending + `createdAt` Descending)
+
+### Known Issues
+
+- Firestore composite index must be created manually before `GET /api/v1/tasks/my` will work
+- See `FIRESTORE_INDEX_SETUP.md` for index creation instructions
+
+### Migration Notes
+
+- **Firestore Index**: Create the required composite index before using `GET /api/v1/tasks/my`
+  - Use the error URL provided by Firestore, or follow manual instructions in `FIRESTORE_INDEX_SETUP.md`
+- **Metadata Endpoint**: Public endpoint, can be called without authentication
+- **Task Creation**: Requires `categoryId`, `taskTypeId`, `location`, schedule, and `dynamicFields`
+- **Task Updates**: Only allowed fields can be updated; system-managed fields are protected
+- **Task Deletion**: Soft delete preserves data history; completed tasks cannot be deleted
+
+---
+
 ## [Unreleased]
 
 ### Planned Features
@@ -152,4 +280,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.1.0** (2026-01-18) - Task management APIs with metadata endpoint, CRUD operations, and Firestore index setup
 - **1.0.0** (2026-01-05) - Initial release with Sprint 1 API implementation
