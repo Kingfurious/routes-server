@@ -27,11 +27,17 @@ const userRoutes = require("./routes/users");
 const termsRoutes = require("./routes/terms");
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/tasks");
+const runnerTaskRoutes = require("./routes/runnerTasks");
+const taskMessagingRoutes = require("./routes/taskMessaging");
+const taskCallRoutes = require("./routes/taskCalls");
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/terms", termsRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/tasks", taskRoutes);
+app.use("/api/v1/runner/tasks", runnerTaskRoutes);
+app.use("/api/v1/tasks", taskMessagingRoutes);
+app.use("/api/v1/tasks", taskCallRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

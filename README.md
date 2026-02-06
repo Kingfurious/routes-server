@@ -30,6 +30,7 @@ Express.js backend API for Errunds application, providing RESTful endpoints for 
 - npm or yarn
 - Firebase project with Firestore enabled
 - Firebase service account credentials
+- Agora account (for in-app calling features) - Optional
 
 ## 🔧 Installation
 
@@ -135,6 +136,41 @@ Authorization: Bearer <firebase_id_token>
 |--------|----------|-------------|---------------|
 | GET | `/terms/active` | Get all active terms | ❌ |
 | GET | `/terms/:type` | Get latest by type (terms/privacy) | ❌ |
+
+#### 🏃 Runner Task Management
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/runner/tasks/{taskId}/accept` | Accept a task | ✅ |
+| POST | `/runner/tasks/{taskId}/reject` | Reject/skip a task | ✅ |
+| POST | `/runner/tasks/{taskId}/start` | Start a task (in_progress) | ✅ |
+| POST | `/runner/tasks/{taskId}/complete` | Complete a task | ✅ |
+| GET | `/runner/tasks/available` | Get available tasks | ✅ |
+| GET | `/runner/tasks/active` | Get runner's active task | ✅ |
+| GET | `/runner/tasks/{taskId}` | Get task details (runner view) | ✅ |
+| POST | `/runner/tasks/status` | Set runner availability | ✅ |
+
+#### 📍 Location Tracking
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/runner/tasks/{taskId}/location/start` | Start location tracking | ✅ |
+| POST | `/runner/tasks/{taskId}/location/update` | Update runner location | ✅ |
+| POST | `/runner/tasks/{taskId}/location/stop` | Stop location tracking | ✅ |
+
+#### 💬 Task Messaging
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/tasks/{taskId}/messages` | Send message (text/image) | ✅ |
+
+#### 📞 Task Calls (Agora RTC)
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/tasks/{taskId}/call/initiate` | Initiate a call | ✅ |
+| POST | `/tasks/{taskId}/call/end` | End a call | ✅ |
+| POST | `/tasks/{taskId}/call/token` | Get token to join call | ✅ |
 
 ### Request/Response Examples
 
@@ -294,11 +330,17 @@ The API interacts with the following Firestore collections:
 - `user_settings/{uid}` - User preferences and settings
 - `terms_versions/{versionId}` - Versioned terms and privacy documents
 - `user_terms_acceptance/{uid}` - User terms acceptance records
+- `tasks/{taskId}` - Task documents with lifecycle tracking
+- `tasks/{taskId}/messages/{messageId}` - Task messages (text/image)
+- `tasks/{taskId}/calls/{callId}` - Call state and metadata
+- `tasks/{taskId}/location_updates/{updateId}` - Location history (optional)
+- `tasks/{taskId}/ratings/{ratingId}` - Task ratings (future)
 
 ## 🛠️ Technologies Used
 
 - **Express.js** - Web framework
 - **Firebase Admin SDK** - Authentication and Firestore access
+- **Agora RTC** - Real-time communication (calling)
 - **CORS** - Cross-origin resource sharing
 - **Node.js** - Runtime environment
 
@@ -307,6 +349,8 @@ The API interacts with the following Firestore collections:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `PORT` | Server port number | `8080` |
+| `AGORA_APP_ID` | Agora App ID for RTC calls | Required for calls |
+| `AGORA_APP_CERTIFICATE` | Agora App Certificate for RTC calls | Required for calls |
 
 ## 🤝 Contributing
 

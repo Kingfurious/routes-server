@@ -134,6 +134,12 @@ const createTask = async (req, res) => {
       startedAt: null,
       completedAt: null,
 
+      // Sprint-3: Real-time collaboration fields
+      chatStatus: "inactive", // inactive, active, read_only
+      callsEnabled: true, // Enable calls by default (disabled on completion)
+      locationTrackingEnabled: false,
+      runnerCurrentLocation: null,
+
       // Timestamps
       createdAt: createdAtTs,
       updatedAt: createdAtTs,

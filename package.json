@@ -8,6 +8,7 @@
     "token:custom": "node scripts/generate-test-token.js"
   },
   "dependencies": {
+    "agora-access-token": "^2.0.4",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",

@@ -271,6 +271,127 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2026-02-03
+
+### Added
+
+#### Runner Task Lifecycle APIs
+- **Task Acceptance & Management**
+  - `POST /api/v1/runner/tasks/{taskId}/accept` - Runner accepts a task
+    - Validates task availability and assigns runner
+    - Updates task status to `accepted` and enables chat
+  - `POST /api/v1/runner/tasks/{taskId}/reject` - Runner rejects/skips a task
+    - Records rejection to prevent reassignment to same runner
+  - `POST /api/v1/runner/tasks/{taskId}/start` - Runner starts a task
+    - Transitions task from `accepted` to `in_progress`
+    - Enables location tracking
+  - `POST /api/v1/runner/tasks/{taskId}/complete` - Runner completes a task
+    - Updates task status to `completed`
+    - Disables location tracking, locks chat, and disables calls
+
+- **Runner Task Feed**
+  - `GET /api/v1/runner/tasks/available` - Get available tasks for runner
+    - Returns tasks with status `created/pending/active` not rejected by runner
+  - `GET /api/v1/runner/tasks/active` - Get runner's active task
+    - Returns task with status `accepted` or `in_progress`
+  - `GET /api/v1/runner/tasks/{taskId}` - Get task details (runner view)
+  - `POST /api/v1/runner/tasks/status` - Set runner availability (online/offline)
+
+#### Geolocation Tracking APIs
+- **Location Management**
+  - `POST /api/v1/runner/tasks/{taskId}/location/start` - Start location tracking
+    - Enables location updates for accepted/in_progress tasks
+  - `POST /api/v1/runner/tasks/{taskId}/location/update` - Update runner location
+    - Validates and throttles updates (20-30s minimum interval, 30m minimum distance)
+    - Updates `runnerCurrentLocation` on task document
+    - Optionally writes to `location_updates` subcollection for history
+  - `POST /api/v1/runner/tasks/{taskId}/location/stop` - Stop location tracking
+
+#### Task Messaging APIs
+- **Chat Functionality**
+  - `POST /api/v1/tasks/{taskId}/messages` - Send message (text or image)
+    - Shared endpoint for both customer and runner
+    - Validates task ownership and chat status
+    - Supports text messages and image messages (via mediaUrl)
+    - Automatically determines sender role (customer/runner)
+    - Updates task with last message info for previews
+    - Messages stored in `tasks/{taskId}/messages` subcollection
+
+#### In-App Calling APIs (Agora RTC)
+- **Call Management**
+  - `POST /api/v1/tasks/{taskId}/call/initiate` - Initiate a call
+    - Validates task status and ownership
+    - Generates Agora RTC token for initiator
+    - Creates call document in `tasks/{taskId}/calls` with status `ringing`
+    - Returns token, channelName, and call metadata
+  - `POST /api/v1/tasks/{taskId}/call/end` - End an active call
+    - Updates call status to `ended` with timestamp
+  - `POST /api/v1/tasks/{taskId}/call/token` - Get token to join existing call
+    - Generates Agora token for the other party
+    - Updates call status to `connected` on first join
+
+#### Shared Utilities & Helpers
+- **Task Access Helpers** (`src/controllers/helpers/taskAccess.js`)
+  - `loadTask()` - Load task with error handling
+  - `assertCustomerOwnsTask()` - Verify customer ownership
+  - `assertRunnerOwnsTask()` - Verify runner ownership
+  - `assertUserBelongsToTask()` - Verify user is customer or runner
+  - `assertTaskStatus()` - Validate task status with legacy mapping
+  - Status normalization helpers for Sprint-3 compatibility
+
+- **Location Utilities** (`src/controllers/helpers/locationUtils.js`)
+  - Haversine distance calculation
+  - Location update throttling (time and distance based)
+
+- **Agora Service** (`src/controllers/helpers/agoraService.js`)
+  - RTC token generation using `agora-access-token` package
+  - Environment-based configuration
+
+#### Firestore Data Model Updates
+- **Task Document Fields**
+  - `chatStatus`: `inactive | active | read_only` - Controls messaging
+  - `callsEnabled`: boolean - Controls call initiation
+  - `locationTrackingEnabled`: boolean - Controls location updates
+  - `runnerCurrentLocation`: `{ lat, lng, updatedAt }` - Snapshot for UI
+  - `lastMessageAt`, `lastMessageText`, `lastMessageSenderId` - Chat previews
+
+- **New Subcollections**
+  - `tasks/{taskId}/messages/{messageId}` - Task messages
+  - `tasks/{taskId}/calls/{callId}` - Call state and metadata
+  - `tasks/{taskId}/location_updates/{updateId}` - Location history (optional)
+
+### Changed
+
+- **Task Creation**: New tasks initialize with Sprint-3 fields (`chatStatus`, `callsEnabled`, `locationTrackingEnabled`)
+- **Status Mapping**: Legacy statuses (`pending` → `created`, `active` → `accepted`) mapped for Sprint-3 compatibility
+- **Task Completion**: Now disables chat, calls, and location tracking automatically
+
+### Technical Details
+
+- **Location Throttling**: Updates throttled to minimum 20 seconds or 30 meters movement
+- **Agora Integration**: Tokens generated on-demand, never stored in Firestore
+- **Message Types**: Supports `text` and `image` message types
+- **Call States**: `ringing` → `connected` → `ended` lifecycle
+- **Chat States**: `inactive` → `active` (on accept) → `read_only` (on completion)
+
+### Dependencies
+
+- **New Package**: `agora-access-token` (required for call functionality)
+  - Install with: `npm install agora-access-token`
+
+### Environment Variables
+
+- `AGORA_APP_ID` - Agora App ID (required for calls)
+- `AGORA_APP_CERTIFICATE` - Agora App Certificate (required for calls)
+
+### Migration Notes
+
+- **Agora Setup**: Configure `AGORA_APP_ID` and `AGORA_APP_CERTIFICATE` environment variables
+- **Firestore Indexes**: May need composite indexes for runner task queries (`runnerId` + `status`)
+- **Status Compatibility**: Existing tasks with `pending`/`active` status work with Sprint-3 APIs via normalization
+
+---
+
 ## [Unreleased]
 
 ### Planned Features
@@ -280,5 +401,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.2.0** (2026-02-03) - Sprint 3: Runner lifecycle, location tracking, messaging, and in-app calling
 - **1.1.0** (2026-01-18) - Task management APIs with metadata endpoint, CRUD operations, and Firestore index setup
 - **1.0.0** (2026-01-05) - Initial release with Sprint 1 API implementation

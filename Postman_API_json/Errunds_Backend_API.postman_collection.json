@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "errunds-backend-api",
-		"name": "Errunds Backend API - Sprint 1",
-		"description": "Complete API collection for Errunds Backend - Sprint 1 endpoints including User Management, Settings, Terms & Privacy, and Authentication",
+		"name": "Errunds Backend API - Sprint 3",
+		"description": "Complete API collection for Errunds Backend - Sprint 1, 2, and 3 endpoints including User Management, Task Management, Runner Lifecycle, Location Tracking, Messaging, and In-App Calling",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -15,9 +15,9 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{firebase_token}}",
-								"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 							}
 						],
 						"url": {
@@ -51,9 +51,9 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									}
 								],
 								"url": {
@@ -78,9 +78,9 @@
 								"method": "POST",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									},
 									{
 										"key": "Content-Type",
@@ -119,9 +119,9 @@
 								"method": "PUT",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									},
 									{
 										"key": "Content-Type",
@@ -160,9 +160,9 @@
 								"method": "PATCH",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									}
 								],
 								"url": {
@@ -188,9 +188,9 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									}
 								],
 								"url": {
@@ -222,9 +222,9 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									}
 								],
 								"url": {
@@ -250,9 +250,9 @@
 								"method": "PUT",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									},
 									{
 										"key": "Content-Type",
@@ -298,9 +298,9 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									}
 								],
 								"url": {
@@ -326,9 +326,9 @@
 								"method": "POST",
 								"header": [
 									{
-										"key": "Authorization",
-										"value": "Bearer {{firebase_token}}",
-										"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 									},
 									{
 										"key": "Content-Type",
@@ -474,9 +474,9 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{firebase_token}}",
-								"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 							},
 							{
 								"key": "Content-Type",
@@ -514,9 +514,9 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{firebase_token}}",
-								"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 							}
 						],
 						"url": {
@@ -541,9 +541,9 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{firebase_token}}",
-								"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 							}
 						],
 						"url": {
@@ -575,9 +575,9 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{firebase_token}}",
-								"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 							},
 							{
 								"key": "Content-Type",
@@ -623,9 +623,9 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{firebase_token}}",
-								"type": "text"
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
 							}
 						],
 						"url": {
@@ -653,6 +653,684 @@
 				}
 			],
 			"description": "Task metadata and task lifecycle endpoints (Create Task flow)."
+		},
+		{
+			"name": "Runner Tasks",
+			"item": [
+				{
+					"name": "Task Lifecycle",
+					"item": [
+						{
+							"name": "Accept Task",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/accept",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										":taskId",
+										"accept"
+									],
+									"variable": [
+										{
+											"key": "taskId",
+											"value": "YOUR_TASK_ID_HERE",
+											"description": "The ID of the task to accept"
+										}
+									]
+								},
+								"description": "Runner accepts a task. Updates task status to 'accepted' and assigns runnerId. Enables chat."
+							},
+							"response": []
+						},
+						{
+							"name": "Reject Task",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/reject",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										":taskId",
+										"reject"
+									],
+									"variable": [
+										{
+											"key": "taskId",
+											"value": "YOUR_TASK_ID_HERE",
+											"description": "The ID of the task to reject"
+										}
+									]
+								},
+								"description": "Runner rejects/skips a task. Records rejection to prevent reassignment to same runner."
+							},
+							"response": []
+						},
+						{
+							"name": "Start Task",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/start",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										":taskId",
+										"start"
+									],
+									"variable": [
+										{
+											"key": "taskId",
+											"value": "YOUR_TASK_ID_HERE",
+											"description": "The ID of the task to start"
+										}
+									]
+								},
+								"description": "Runner starts a task. Transitions task from 'accepted' to 'in_progress' and enables location tracking."
+							},
+							"response": []
+						},
+						{
+							"name": "Complete Task",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/complete",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										":taskId",
+										"complete"
+									],
+									"variable": [
+										{
+											"key": "taskId",
+											"value": "YOUR_TASK_ID_HERE",
+											"description": "The ID of the task to complete"
+										}
+									]
+								},
+								"description": "Runner completes a task. Updates status to 'completed', disables location tracking, locks chat, and disables calls."
+							},
+							"response": []
+						}
+					],
+					"description": "Runner task lifecycle management endpoints"
+				},
+				{
+					"name": "Task Feed",
+					"item": [
+						{
+							"name": "Get Available Tasks",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/available",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										"available"
+									]
+								},
+								"description": "Get available tasks for runner. Returns tasks with status 'created/pending/active' not rejected by this runner."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Active Task",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/active",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										"active"
+									]
+								},
+								"description": "Get runner's active task. Returns task with status 'accepted' or 'in_progress'."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Task By ID (Runner View)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/:taskId",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										":taskId"
+									],
+									"variable": [
+										{
+											"key": "taskId",
+											"value": "YOUR_TASK_ID_HERE",
+											"description": "The ID of the task to retrieve"
+										}
+									]
+								},
+								"description": "Get task details from runner's perspective. Returns task if runner owns it or task is available."
+							},
+							"response": []
+						}
+					],
+					"description": "Runner task feed endpoints"
+				},
+				{
+					"name": "Runner Status",
+					"item": [
+						{
+							"name": "Set Runner Status",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"online\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/runner/tasks/status",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"runner",
+										"tasks",
+										"status"
+									]
+								},
+								"description": "Set runner availability status. Accepts 'online' or 'offline'. Affects task assignment."
+							},
+							"response": []
+						}
+					],
+					"description": "Runner availability management"
+				}
+			],
+			"description": "Runner task management endpoints (Sprint 3)"
+		},
+		{
+			"name": "Location Tracking",
+			"item": [
+				{
+					"name": "Start Location Tracking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/location/start",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"runner",
+								"tasks",
+								":taskId",
+								"location",
+								"start"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Start location tracking for a task. Enables location updates for accepted/in_progress tasks. Runner only."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Location",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lat\": 12.9716,\n  \"lng\": 77.5946,\n  \"accuracy\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/location/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"runner",
+								"tasks",
+								":taskId",
+								"location",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Update runner's current location. Throttled to minimum 20 seconds or 30 meters movement. Updates runnerCurrentLocation on task document and optionally writes to location_updates subcollection. Runner only."
+					},
+					"response": []
+				},
+				{
+					"name": "Stop Location Tracking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{runner_token}}",
+							"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/runner/tasks/:taskId/location/stop",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"runner",
+								"tasks",
+								":taskId",
+								"location",
+								"stop"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Stop location tracking for a task. Disables location updates. Runner only."
+					},
+					"response": []
+				}
+			],
+			"description": "Location tracking endpoints for runner live location updates (Sprint 3)"
+		},
+		{
+			"name": "Task Messaging",
+			"item": [
+				{
+					"name": "Send Text Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"text\",\n  \"text\": \"Hello! I'm on my way to the location.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId/messages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId",
+								"messages"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Send a text message in task chat. Shared endpoint for both customer and runner. Requires task status to be 'accepted' or 'in_progress' and chatStatus to be 'active'."
+					},
+					"response": []
+				},
+				{
+					"name": "Send Image Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"image\",\n  \"mediaUrl\": \"https://storage.googleapis.com/your-bucket/image.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId/messages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId",
+								"messages"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Send an image message in task chat. Requires mediaUrl to be a valid HTTPS URL. Image should be uploaded to Firebase Storage or similar service first."
+					},
+					"response": []
+				}
+			],
+			"description": "Task messaging endpoints for customer-runner communication (Sprint 3)"
+		},
+		{
+			"name": "Task Calls",
+			"item": [
+				{
+					"name": "Initiate Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId/call/initiate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId",
+								"call",
+								"initiate"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Initiate a call for a task. Runner or customer can initiate. Generates Agora RTC token for initiator and creates call document with status 'ringing'. Returns token, channelName, and call metadata. Requires task status to be 'accepted' or 'in_progress'."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Call Token (Join Call)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"callId\": \"YOUR_CALL_ID_HERE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId/call/token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId",
+								"call",
+								"token"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "Get Agora token to join an existing call (for the other party). Updates call status to 'connected' on first join. Requires callId in request body."
+					},
+					"response": []
+				},
+				{
+					"name": "End Call",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+							"key": "Authorization",
+							"value": "Bearer {{customer_token}}",
+							"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"callId\": \"YOUR_CALL_ID_HERE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/tasks/:taskId/call/end",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tasks",
+								":taskId",
+								"call",
+								"end"
+							],
+							"variable": [
+								{
+									"key": "taskId",
+									"value": "YOUR_TASK_ID_HERE",
+									"description": "The ID of the task"
+								}
+							]
+						},
+						"description": "End an active call. Updates call status to 'ended' with timestamp. Requires callId in request body. Only works for calls with status 'ringing' or 'connected'."
+					},
+					"response": []
+				}
+			],
+			"description": "In-app calling endpoints using Agora RTC (Sprint 3). Requires AGORA_APP_ID and AGORA_APP_CERTIFICATE environment variables."
 		}
 	],
 	"variable": [
@@ -662,8 +1340,31 @@
 			"type": "string"
 		},
 		{
+			"key": "customer_token",
+			"value": "YOUR_CUSTOMER_FIREBASE_ID_TOKEN_HERE",
+			"type": "string",
+			"description": "Firebase ID token for customer user (primary)"
+		},
+		{
+			"key": "runner_token",
+			"value": "YOUR_RUNNER_FIREBASE_ID_TOKEN_HERE",
+			"type": "string",
+			"description": "Firebase ID token for runner user"
+		},
+		{
 			"key": "firebase_token",
 			"value": "YOUR_FIREBASE_ID_TOKEN_HERE",
+			"type": "string",
+			"description": "Legacy token variable (fallback)"
+		},
+		{
+			"key": "taskId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "callId",
+			"value": "",
 			"type": "string"
 		}
 	]
