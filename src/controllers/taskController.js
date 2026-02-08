@@ -81,6 +81,17 @@ const createTask = async (req, res) => {
     const taskRef = db.collection("tasks").doc();
     const taskId = taskRef.id;
 
+    // Fetch customer display name from users collection for runner/customer UI
+    let customerName = null;
+    try {
+      const userDoc = await db.collection("users").doc(uid).get();
+      if (userDoc.exists && userDoc.data()?.name) {
+        customerName = userDoc.data().name;
+      }
+    } catch (err) {
+      console.warn("Could not fetch customer name for task:", err.message);
+    }
+
     // Very simple human-readable task number (can be improved later)
     const createdAtTs = nowTimestamp();
     const createdAtMillis = createdAtTs.toMillis();
@@ -94,6 +105,7 @@ const createTask = async (req, res) => {
       // Customer
       customerId: uid,
       customerEmail: email || null,
+      customerName: customerName || null,
 
       // Task details
       categoryId,

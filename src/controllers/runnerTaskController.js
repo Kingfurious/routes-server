@@ -7,6 +7,7 @@ const {
   nowTimestamp,
   normalizeStatus,
   canTrackLocation,
+  enrichTaskWithCustomerName,
 } = require("./helpers/taskAccess");
 const { shouldThrottleLocationUpdate } = require("./helpers/locationUtils");
 
@@ -49,16 +50,15 @@ const acceptTask = async (req, res) => {
       chatStatus: "active", // Enable chat when task is accepted
     });
 
-    // Fetch updated task
+    // Fetch updated task and enrich with customer name if missing
     const updatedDoc = await taskRef.get();
+    const data = { id: updatedDoc.id, ...updatedDoc.data() };
+    await enrichTaskWithCustomerName(data);
 
     return res.status(200).json({
       success: true,
       message: "Task accepted successfully",
-      data: {
-        id: updatedDoc.id,
-        ...updatedDoc.data(),
-      },
+      data,
     });
   } catch (error) {
     console.error("Error accepting task:", error);
@@ -156,13 +156,12 @@ const startTask = async (req, res) => {
     // Fetch updated task
     const updatedDoc = await taskRef.get();
 
+    const data = { id: updatedDoc.id, ...updatedDoc.data() };
+    await enrichTaskWithCustomerName(data);
     return res.status(200).json({
       success: true,
       message: "Task started successfully",
-      data: {
-        id: updatedDoc.id,
-        ...updatedDoc.data(),
-      },
+      data,
     });
   } catch (error) {
     console.error("Error starting task:", error);
@@ -211,13 +210,12 @@ const completeTask = async (req, res) => {
     // Fetch updated task
     const updatedDoc = await taskRef.get();
 
+    const data = { id: updatedDoc.id, ...updatedDoc.data() };
+    await enrichTaskWithCustomerName(data);
     return res.status(200).json({
       success: true,
       message: "Task completed successfully",
-      data: {
-        id: updatedDoc.id,
-        ...updatedDoc.data(),
-      },
+      data,
     });
   } catch (error) {
     console.error("Error completing task:", error);
@@ -250,18 +248,17 @@ const getAvailableTasks = async (req, res) => {
       .get();
 
     const tasks = [];
-    snapshot.forEach((doc) => {
+    for (const doc of snapshot.docs) {
       const taskData = doc.data();
       const rejections = taskData.runnerRejections || [];
 
       // Filter out tasks rejected by this runner or already assigned
       if (!rejections.includes(uid) && (!taskData.runnerId || taskData.runnerId === uid)) {
-        tasks.push({
-          id: doc.id,
-          ...taskData,
-        });
+        const task = { id: doc.id, ...taskData };
+        await enrichTaskWithCustomerName(task);
+        tasks.push(task);
       }
-    });
+    }
 
     return res.json({
       success: true,
@@ -300,12 +297,11 @@ const getActiveTask = async (req, res) => {
     }
 
     const taskDoc = snapshot.docs[0];
+    const data = { id: taskDoc.id, ...taskDoc.data() };
+    await enrichTaskWithCustomerName(data);
     return res.json({
       success: true,
-      data: {
-        id: taskDoc.id,
-        ...taskDoc.data(),
-      },
+      data,
     });
   } catch (error) {
     console.error("Error fetching active task:", error);
@@ -335,12 +331,11 @@ const getTaskById = async (req, res) => {
       });
     }
 
+    const data = { id: taskDoc.id, ...taskData };
+    await enrichTaskWithCustomerName(data);
     return res.json({
       success: true,
-      data: {
-        id: taskDoc.id,
-        ...taskData,
-      },
+      data,
     });
   } catch (error) {
     console.error("Error fetching task:", error);

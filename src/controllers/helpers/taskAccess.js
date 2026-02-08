@@ -143,6 +143,27 @@ const canInitiateCalls = (taskData) => {
   return status === "accepted" || status === "in_progress";
 };
 
+/**
+ * Enrich task data with customerName from users collection if missing.
+ * Used for tasks created before customerName was stored on the task.
+ * @param {Object} taskData - The task data object (mutated in place)
+ * @returns {Promise<Object>} The same taskData with customerName set if it was missing
+ */
+const enrichTaskWithCustomerName = async (taskData) => {
+  if (taskData.customerName) return taskData;
+  const customerId = taskData.customerId;
+  if (!customerId) return taskData;
+  try {
+    const userDoc = await db.collection("users").doc(customerId).get();
+    if (userDoc.exists && userDoc.data()?.name) {
+      taskData.customerName = userDoc.data().name;
+    }
+  } catch (err) {
+    console.warn("Could not enrich task with customer name:", err.message);
+  }
+  return taskData;
+};
+
 module.exports = {
   nowTimestamp,
   loadTask,
@@ -154,4 +175,5 @@ module.exports = {
   canTrackLocation,
   canSendMessages,
   canInitiateCalls,
+  enrichTaskWithCustomerName,
 };
