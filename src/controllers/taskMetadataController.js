@@ -54,7 +54,6 @@ const cleanDocumentData = (docId, data) => {
  * Returns the single bundled JSON cache object used by the Flutter app
  * to render the entire "Create Task" experience.
  *
- * Shape (from Cache in the errunds applications.pdf):
  * {
  *   version: "2026.01",
  *   lastUpdatedAt: 1737129600000,
