@@ -3,21 +3,13 @@ const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
 
-// Initialize Firebase Admin SDK
-// - Locally: uses src/services.json (service account key file)
-// - Cloud Run / GCP: uses Application Default Credentials (ADC) automatically
+// Initialize Firebase Admin SDK with service account credentials
 if (!admin.apps.length) {
-  try {
-    const serviceAccount = require("./services.json");
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-    console.log("Firebase Admin SDK initialized with service account key");
-  } catch {
-    // services.json not present (e.g. Cloud Run) — use ADC
-    admin.initializeApp();
-    console.log("Firebase Admin SDK initialized with Application Default Credentials");
-  }
+  const serviceAccount = require("./services.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+  console.log("Firebase Admin SDK initialized successfully");
 }
 
 const app = express();
