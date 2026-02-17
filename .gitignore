@@ -1,3 +1,35 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Secrets & credentials (NEVER commit)
 .env
+.env.*
+!.env.example
 src/services.json
+
+# Dev / test scripts (not needed in production)
+scripts/
+
+# Postman exports (local dev tooling)
+Postman_API_json/
+
+# Documentation that isn't needed for deployment
+CHANGELOG.md
+FCM_IMPLEMENTATION_GUIDE.md
+FCM_QUICKSTART.md
+FCM_SUMMARY.md
+FIRESTORE_SCHEMA.md
+HOW_TO_GET_ID_TOKEN.md
+CLOUD_FUNCTION_DEPLOYMENT.md
+FIRESTORE_INDEX_SETUP.md
+
+# OS & IDE junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Misc
+*.rar
+npm-debug.log
+*.log

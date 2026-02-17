@@ -234,17 +234,16 @@ const completeTask = async (req, res) => {
 
 /**
  * GET /api/v1/runner/tasks/available
- * Get available tasks for runner (status = created/pending)
+ * Get available tasks for runner (status = created/pending/active)
  */
 const getAvailableTasks = async (req, res) => {
   try {
     const { uid } = req.user;
 
-    // Query tasks with status created/pending/active (not assigned or rejected by this runner)
+    // Query without orderBy to avoid requiring a composite index (works even if indexes not deployed)
     const snapshot = await db
       .collection("tasks")
       .where("status", "in", ["pending", "created", "active"])
-      .orderBy("createdAt", "desc")
       .get();
 
     const tasks = [];
@@ -252,13 +251,24 @@ const getAvailableTasks = async (req, res) => {
       const taskData = doc.data();
       const rejections = taskData.runnerRejections || [];
 
-      // Filter out tasks rejected by this runner or already assigned
+      // Filter out tasks rejected by this runner or already assigned to another runner
       if (!rejections.includes(uid) && (!taskData.runnerId || taskData.runnerId === uid)) {
         const task = { id: doc.id, ...taskData };
         await enrichTaskWithCustomerName(task);
         tasks.push(task);
       }
     }
+
+    // Sort by createdAt descending in memory (so we don't need a Firestore composite index)
+    tasks.sort((a, b) => {
+      const aAt = a.createdAt && typeof a.createdAt.toMillis === "function"
+        ? a.createdAt.toMillis()
+        : typeof a.createdAt === "number" ? a.createdAt : 0;
+      const bAt = b.createdAt && typeof b.createdAt.toMillis === "function"
+        ? b.createdAt.toMillis()
+        : typeof b.createdAt === "number" ? b.createdAt : 0;
+      return bAt - aAt;
+    });
 
     return res.json({
       success: true,

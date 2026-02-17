@@ -47,15 +47,35 @@ const initiateCall = async (req, res) => {
       .get();
 
     if (!activeCallsSnapshot.empty) {
-      const existingCall = activeCallsSnapshot.docs[0].data();
-      return res.status(400).json({
-        error: "Bad Request",
-        message: "An active call already exists for this task",
-        data: {
-          callId: activeCallsSnapshot.docs[0].id,
-          status: existingCall.status,
-        },
-      });
+      const existingCallDoc = activeCallsSnapshot.docs[0];
+      const existingCall = existingCallDoc.data();
+
+      // Check for stale ringing calls (e.g., older than 30 seconds)
+      const now = Date.now();
+      const startedAt = existingCall.startedAt || 0;
+      const STALE_THRESHOLD_MS = 30000; // 30 seconds
+
+      if (
+        existingCall.status === "ringing" &&
+        now - startedAt > STALE_THRESHOLD_MS
+      ) {
+        // Mark as failed/ended and continue
+        await existingCallDoc.ref.update({
+          status: "failed",
+          endedAt: now,
+          failReason: "stale_cleanup",
+        });
+        console.log(`Cleaned up stale call ${existingCallDoc.id}`);
+      } else {
+        return res.status(400).json({
+          error: "Bad Request",
+          message: "An active call already exists for this task",
+          data: {
+            callId: existingCallDoc.id,
+            status: existingCall.status,
+          },
+        });
+      }
     }
 
     // Get Agora configuration
@@ -74,14 +94,15 @@ const initiateCall = async (req, res) => {
     const timestamp = Date.now();
     const channelName = `task_${taskId}_call_${timestamp}`;
 
-    // Generate Agora token for initiator
+    // Generate Agora token for initiator (use uid 1 so callee can use uid 2 - Agora requires unique UIDs per user in channel)
+    const callerUid = 1;
     let token;
     try {
       const tokenResult = generateRtcToken({
         appId,
         appCertificate,
         channelName,
-        uid: uid, // Use Firebase UID as Agora UID (or 0 for auto-generated)
+        uid: callerUid,
         role: "publisher",
         expirationTimeInSeconds: 3600, // 1 hour
       });
@@ -119,6 +140,7 @@ const initiateCall = async (req, res) => {
         callId,
         token,
         channelName,
+        uid: callerUid,
         role: "caller",
         expiresAt: Date.now() + 3600000, // 1 hour from now
       },
@@ -268,14 +290,15 @@ const getCallToken = async (req, res) => {
       });
     }
 
-    // Generate token for joining user
+    // Generate token for joining user (use uid 2 so caller's uid 1 is unique - Agora requires unique UIDs per user in channel)
+    const calleeUid = 2;
     let token;
     try {
       const tokenResult = generateRtcToken({
         appId,
         appCertificate,
         channelName: callData.channelName,
-        uid: uid,
+        uid: calleeUid,
         role: "publisher",
         expirationTimeInSeconds: 3600,
       });
@@ -302,6 +325,7 @@ const getCallToken = async (req, res) => {
         callId,
         token,
         channelName: callData.channelName,
+        uid: calleeUid,
         role: "callee",
         expiresAt: Date.now() + 3600000,
       },

@@ -140,7 +140,7 @@ const canSendMessages = (taskData) => {
  */
 const canInitiateCalls = (taskData) => {
   const status = normalizeStatus(taskData.status);
-  return status === "accepted" || status === "in_progress";
+  return status === "accepted" || status === "in_progress" || status === "arrived";
 };
 
 /**
